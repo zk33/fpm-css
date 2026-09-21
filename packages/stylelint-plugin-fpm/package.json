@@ -1,0 +1,40 @@
+{
+  "name": "stylelint-plugin-fpm",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Stylelint custom rules for the fpm CSS convention.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "pnpm run build",
+    "test": "pnpm run build && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
+  },
+  "peerDependencies": {
+    "stylelint": ">=17 <18"
+  },
+  "dependencies": {
+    "postcss-selector-parser": "^7.1.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.0.0",
+    "jest": "^30.4.2",
+    "jest-preset-stylelint": "^9.2.0",
+    "postcss": "^8.5.16",
+    "stylelint": "^17.14.0",
+    "typescript": "^6.0.3"
+  }
+}

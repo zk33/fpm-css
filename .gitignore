@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.astro/
+docs/dist/
+packages/*/dist/
+coverage/
+
+# Package manager
+.pnpm-store/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# mgr internal task records (manager workflow logs; not published)
+tasks/
+mgr_prompts/

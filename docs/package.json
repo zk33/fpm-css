@@ -1,0 +1,16 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "lint": "echo \"TODO: lint docs\"",
+    "test": "echo \"TODO: test docs\""
+  },
+  "devDependencies": {
+    "@astrojs/starlight": "^0.41.3",
+    "astro": "^7.0.6"
+  }
+}

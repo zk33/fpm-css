@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  # TODO(public): enable npm Trusted Publishing/provenance after switching repo/packages public.
+  # id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-pr:
+    name: changesets-release-pr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate
+        run: pnpm generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Create Changesets release PR
+        uses: changesets/action@v1
+        with:
+          version: pnpm version-packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: npm-publish-disabled-private-phase
+    needs: release-pr
+    runs-on: ubuntu-latest
+    # Private phase: do not publish packages.
+    # TODO(public): replace this skeleton with Changesets publish using Trusted Publishing.
+    # Required after public switch:
+    # - uncomment top-level id-token: write
+    # - register each npm package as a Trusted Publisher
+    # - set publish command, for example: pnpm changeset publish
+    if: ${{ false }}
+    steps:
+      - name: Publish disabled
+        run: 'echo "TODO(public): enable npm publish after public switch"'

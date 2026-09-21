@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zk33/fpm-css/rules/convention.schema.json",
+  "title": "FPM CSS Convention SoT",
+  "description": "Single Source of Truth for FPM CSS Coding Conventions. Stylelint, docs, AI rule files, and skills are generated from rules/convention.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "classes", "rules"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Convention SoT version in semver format.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "classes": {
+      "type": "array",
+      "description": "Priority-ordered class definitions: A=custom FPM plugin, B=standard Stylelint, C=advisory.",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/class" }, { "properties": { "id": { "const": "A" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/class" }, { "properties": { "id": { "const": "B" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/class" }, { "properties": { "id": { "const": "C" } } }] }
+      ],
+      "items": false
+    },
+    "rules": {
+      "type": "array",
+      "description": "Native CSS convention rules.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "enforcement", "stylelintEnforced"],
+      "properties": {
+        "id": { "type": "string", "enum": ["A", "B", "C"] },
+        "title": { "type": "string", "description": "Display name describing the class.", "minLength": 1 },
+        "enforcement": { "type": "string", "description": "How the class is upheld.", "minLength": 1 },
+        "stylelintEnforced": { "type": "boolean", "description": "Whether Stylelint enforces this class." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "id": { "const": "C" } } },
+          "then": { "properties": { "stylelintEnforced": { "const": false } } },
+          "else": { "properties": { "stylelintEnforced": { "const": true } } }
+        }
+      ]
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "class", "level", "title", "summary", "rationale", "good", "bad", "aiGuidance", "stylelintRule", "docsPath"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable ID, for example CSS-FILE-001.", "pattern": "^CSS-[A-Z]+-[0-9]{3}$" },
+        "category": {
+          "type": "string",
+          "description": "Primary category. Rules with multiple concerns choose one primary concern.",
+          "enum": ["naming", "file-structure", "prefix", "nesting", "variables", "responsive", "prohibited", "js-integration"]
+        },
+        "class": { "type": "string", "description": "Priority class: A=custom FPM plugin, B=standard Stylelint, C=advisory.", "enum": ["A", "B", "C"] },
+        "level": { "type": "string", "description": "Violation handling: A/B are normally error; C is advisory and upheld by AI and review.", "enum": ["error", "warn", "advisory"] },
+        "title": { "type": "string", "description": "One-line title.", "minLength": 1 },
+        "summary": { "type": "string", "description": "One- or two-line summary.", "minLength": 1 },
+        "rationale": { "type": "string", "description": "Rule rationale.", "minLength": 1 },
+        "good": { "type": "string", "description": "Good example; may span multiple lines.", "minLength": 1 },
+        "bad": { "type": "string", "description": "Bad example; may span multiple lines.", "minLength": 1 },
+        "aiGuidance": { "type": "string", "description": "Guidance for AI generation, especially important for Class C.", "minLength": 1 },
+        "stylelintRule": { "type": ["string", "null"], "description": "Corresponding Stylelint rule name. A/B use strings and C uses null; custom FPM rules use the fpm/ prefix.", "pattern": "^([a-z][a-z0-9-]*/)?[a-z][a-z0-9-]*$" },
+        "docsPath": { "type": "string", "description": "Relative docs-site path, for example conventions/file-scope.", "pattern": "^conventions/[a-z][a-z0-9-]*$" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "class": { "const": "C" } } },
+          "then": {
+            "description": "Class C is not linted, so stylelintRule is null and level is advisory.",
+            "properties": { "stylelintRule": { "type": "null" }, "level": { "const": "advisory" } }
+          },
+          "else": {
+            "description": "Classes A and B are Stylelint-enforced, so stylelintRule is a string and level is error or warn.",
+            "properties": { "stylelintRule": { "type": "string" }, "level": { "enum": ["error", "warn"] } }
+          }
+        }
+      ]
+    }
+  }
+}

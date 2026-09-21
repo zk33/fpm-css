@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: install-generate-lint-test-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate and check drift
+        run: |
+          pnpm generate
+          git diff --exit-code
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: CSS lint
+        run: pnpm lint:css
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

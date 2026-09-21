@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zk33/fpm-css/rules/convention.ja.schema.json",
+  "title": "FPM CSS Convention Japanese translation overlay",
+  "description": "Japanese translation overlay for rules/convention.yaml. The generator validates exact class and rule ID coverage at generation time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lang", "ui", "classes", "rules"],
+  "properties": {
+    "lang": { "const": "ja" },
+    "ui": { "$ref": "#/$defs/uiTranslation" },
+    "classes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B", "C"],
+      "properties": {
+        "A": { "$ref": "#/$defs/classTranslation" },
+        "B": { "$ref": "#/$defs/classTranslation" },
+        "C": { "$ref": "#/$defs/classTranslation" }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "description": "Rule IDs are validated against convention.yaml at generation time.",
+      "additionalProperties": { "$ref": "#/$defs/ruleTranslation" }
+    }
+  },
+  "$defs": {
+    "uiTranslation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "referenceTitle",
+        "referenceDescription",
+        "generatedNotice",
+        "rulesByClass",
+        "classRules",
+        "classListItem",
+        "classDescription",
+        "rules",
+        "backToReference",
+        "class",
+        "level",
+        "category",
+        "summary",
+        "rationale",
+        "good",
+        "bad",
+        "aiGuidance",
+        "categories"
+      ],
+      "properties": {
+        "referenceTitle": { "type": "string", "minLength": 1 },
+        "referenceDescription": { "type": "string", "minLength": 1 },
+        "generatedNotice": { "type": "string", "minLength": 1 },
+        "rulesByClass": { "type": "string", "minLength": 1 },
+        "classRules": { "type": "string", "minLength": 1 },
+        "classListItem": { "type": "string", "minLength": 1 },
+        "classDescription": { "type": "string", "minLength": 1 },
+        "rules": { "type": "string", "minLength": 1 },
+        "backToReference": { "type": "string", "minLength": 1 },
+        "class": { "type": "string", "minLength": 1 },
+        "level": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "good": { "type": "string", "minLength": 1 },
+        "bad": { "type": "string", "minLength": 1 },
+        "aiGuidance": { "type": "string", "minLength": 1 },
+        "categories": { "$ref": "#/$defs/categoryTranslations" }
+      }
+    },
+    "categoryTranslations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["naming", "file-structure", "prefix", "variables", "nesting", "responsive", "prohibited", "js-integration"],
+      "properties": {
+        "naming": { "type": "string", "minLength": 1 },
+        "file-structure": { "type": "string", "minLength": 1 },
+        "prefix": { "type": "string", "minLength": 1 },
+        "variables": { "type": "string", "minLength": 1 },
+        "nesting": { "type": "string", "minLength": 1 },
+        "responsive": { "type": "string", "minLength": 1 },
+        "prohibited": { "type": "string", "minLength": 1 },
+        "js-integration": { "type": "string", "minLength": 1 }
+      }
+    },
+    "classTranslation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "enforcement"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "enforcement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ruleTranslation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "summary", "rationale", "aiGuidance"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "aiGuidance": { "type": "string", "minLength": 1 },
+        "good": { "type": "string", "minLength": 1 },
+        "bad": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

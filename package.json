@@ -1,0 +1,24 @@
+{
+  "name": "fpm-css",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@11.9.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-rules.mjs",
+    "lint": "pnpm run lint:css",
+    "lint:css": "pnpm --filter stylelint-plugin-fpm build && stylelint \"packages/**/*.css\" --allow-empty-input",
+    "test": "pnpm run test:convention && pnpm --filter stylelint-plugin-fpm test",
+    "test:convention": "node --test scripts/convention-classification.test.mjs",
+    "build": "pnpm -r --if-present build",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "js-yaml": "^4.1.0",
+    "stylelint": "^17.14.0",
+    "stylelint-config-fpm": "workspace:*"
+  }
+}

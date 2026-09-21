@@ -1,0 +1,28 @@
+@custom-media --v-screen-sm (width >= 40rem);
+
+.header {
+  --header-color-text: #000;
+
+  animation-name: header-fade-in;
+  color: var(--header-color-text);
+
+  @media (--v-screen-sm) {
+    color: #333;
+  }
+}
+
+.header-logo {
+  .header & {
+    color: var(--header-color-text);
+  }
+}
+
+@keyframes header-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
