@@ -1,9 +1,24 @@
 {
   "name": "stylelint-config-fpm",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
+  "private": false,
   "license": "MIT",
   "description": "Shareable Stylelint config for the fpm CSS convention.",
+  "keywords": [
+    "css",
+    "fpm",
+    "stylelint",
+    "stylelint-config"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zk33/fpm-css.git",
+    "directory": "packages/stylelint-config-fpm"
+  },
+  "homepage": "https://zk33.github.io/fpm-css/",
+  "bugs": {
+    "url": "https://github.com/zk33/fpm-css/issues"
+  },
   "type": "commonjs",
   "main": "./index.cjs",
   "exports": {
@@ -13,6 +28,9 @@
     "index.cjs",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "node --check index.cjs",
     "lint": "pnpm run build",
