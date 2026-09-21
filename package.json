@@ -1,8 +1,16 @@
 {
   "name": "fpm-css",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zk33/fpm-css.git"
+  },
+  "homepage": "https://zk33.github.io/fpm-css/",
+  "bugs": {
+    "url": "https://github.com/zk33/fpm-css/issues"
+  },
   "packageManager": "pnpm@11.9.0",
   "type": "module",
   "scripts": {
