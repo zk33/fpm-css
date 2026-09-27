@@ -198,7 +198,7 @@ export function getTypeSelectorViolations(selector: string, allowedParentClasses
   try {
     selectorParser((root) => {
       root.walkTags((tagNode) => {
-        if (!hasAllowedClassBeforeNode(tagNode, allowedParentClasses)) {
+        if (isTypeSelectorPosition(tagNode) && !hasAllowedClassBeforeNode(tagNode, allowedParentClasses)) {
           violations.push(tagNode.value);
         }
       });
@@ -208,6 +208,62 @@ export function getTypeSelectorViolations(selector: string, allowedParentClasses
   }
 
   return violations;
+}
+
+const selectorArgumentPseudos = new Set([
+  ":is", ":where", ":not", ":has", ":matches", ":-webkit-any", ":-moz-any",
+  ":host", ":host-context", "::slotted"
+]);
+
+function isTypeSelectorPosition(node: SelectorNode): boolean {
+  let child = node;
+  let parent = node.parent as SelectorNode | undefined;
+
+  while (parent) {
+    if (parent.type === "pseudo") {
+      const name = parent.value.toLowerCase();
+      if (name === ":nth-child" || name === ":nth-last-child") {
+        const firstSelector = parent.nodes?.[0];
+        const ofNode = firstSelector?.nodes.find((candidate) =>
+          candidate.type === "tag" && candidate.value.toLowerCase() === "of");
+        if (!ofNode || node.sourceIndex <= ofNode.sourceIndex) {
+          return false;
+        }
+      } else if (!selectorArgumentPseudos.has(name)) {
+        return false;
+      }
+    }
+    child = parent;
+    parent = child.parent as SelectorNode | undefined;
+  }
+  return true;
+}
+
+export function getParentRuleThroughMedia(rule: Rule): Rule | undefined {
+  let parent = rule.parent;
+  while (parent?.type === "atrule" && parent.name.toLowerCase() === "media") {
+    parent = parent.parent;
+  }
+  return parent?.type === "rule" ? parent : undefined;
+}
+
+export function everySubjectHasOwner(rule: Rule, isOwner: (name: string) => boolean): boolean {
+  try {
+    const selectors = selectorParser().astSync(rule.selector);
+    return selectors.nodes.length > 0 && selectors.nodes.every((selector) => {
+      const subject = getSubjectNodes(selector);
+      if (subject.some((node) => node.type === "class" && isOwner(node.value))) {
+        return true;
+      }
+      if (!subject.some((node) => node.type === "nesting")) {
+        return false;
+      }
+      const parent = getParentRuleThroughMedia(rule);
+      return parent !== undefined && everySubjectHasOwner(parent, isOwner);
+    });
+  } catch {
+    return false;
+  }
 }
 
 export function declarationHasAncestorRule(declaration: Declaration, predicate: (rule: Rule) => boolean): boolean {
@@ -308,11 +364,9 @@ function getResolvedSubjectClassNamesFromSelector(selectorNode: Selector, rule: 
       .map((node) => node.value);
   }
 
-  if (rule.parent?.type !== "rule") {
-    return [];
-  }
+  const parent = getParentRuleThroughMedia(rule);
 
-  return getResolvedSubjectClassNames(rule.parent);
+  return parent ? getResolvedSubjectClassNames(parent) : [];
 }
 
 function getSubjectNodes(selectorNode: Selector): SelectorNode[] {

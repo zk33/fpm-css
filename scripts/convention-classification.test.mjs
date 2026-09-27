@@ -11,6 +11,7 @@ const expectedRulesByClass = {
     "CSS-PREFIX-001",
     "CSS-PREFIX-002",
     "CSS-PREFIX-004",
+    "CSS-NEST-001",
     "CSS-NEST-002",
     "CSS-NEST-003",
     "CSS-VAR-002",
@@ -22,7 +23,6 @@ const expectedRulesByClass = {
     "CSS-NAMING-001",
     "CSS-PROHIBIT-001",
     "CSS-PROHIBIT-003",
-    "CSS-NEST-001",
     "CSS-VAR-001",
   ],
   C: [
@@ -90,7 +90,7 @@ test("Class A/B priority definitions and generated metadata stay synchronized", 
     "../docs/src/content/docs/ja/reference",
   ]) {
     const rulesIndex = await readFile(new URL(`${referencePath}/rules.md`, import.meta.url), "utf8");
-    assert.match(rulesIndex, /Rules: 22 \(A12 \/ B5 \/ C5\)/);
+    assert.match(rulesIndex, /Rules: 22 \(A13 \/ B4 \/ C5\)/);
     assert.ok(
       rulesIndex.indexOf("./class-a/") < rulesIndex.indexOf("./class-b/") &&
         rulesIndex.indexOf("./class-b/") < rulesIndex.indexOf("./class-c/"),
@@ -110,7 +110,7 @@ test("Class A/B priority definitions and generated metadata stay synchronized", 
 
       assert.match(
         page,
-        new RegExp(`Rules: ${expectedIds.length} \\(Class ${className}; all rules: A12 / B5 / C5\\)`),
+        new RegExp(`Rules: ${expectedIds.length} \\(Class ${className}; all rules: A13 / B4 / C5\\)`),
       );
       assert.deepEqual(actualIds, [...expectedIds].sort());
     }

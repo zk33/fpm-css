@@ -16,6 +16,7 @@ reviewing `**/*.css`. For details and good/bad examples, see
 - `CSS-PREFIX-001` (A, `fpm/global-class-file`) — Global classes use .g- and live in _g.css
 - `CSS-PREFIX-002` (A, `fpm/no-x-class-style`) — JS hook classes (.x-) must not be styled in CSS
 - `CSS-PREFIX-004` (A, `fpm/mode-class-compound`) — .mode- only as a compound with another class (no standalone or descendant-only use)
+- `CSS-NEST-001` (A, `fpm/max-selector-nesting-depth`) — Nesting is discouraged; at most one level when allowed
 - `CSS-NEST-002` (A, `fpm/no-cross-file-nesting`) — No nested overrides of classes defined in other files
 - `CSS-NEST-003` (A, `fpm/nested-parent-reference`) — When nesting, reference the parent from the child side to keep rules together
 - `CSS-VAR-002` (A, `fpm/global-var-contract`) — Global variables are defined as --v- in :root of _v.css
@@ -25,7 +26,6 @@ reviewing `**/*.css`. For details and good/bad examples, see
 - `CSS-NAMING-001` (B, `selector-class-pattern`) — Class names are lowercase kebab-case
 - `CSS-PROHIBIT-001` (B, `selector-max-id`) — No styling via ID selectors
 - `CSS-PROHIBIT-003` (B, `at-rule-disallowed-list`) — @layer / @scope are not used by default
-- `CSS-NEST-001` (B, `max-nesting-depth`) — Nesting is discouraged; at most one level when allowed
 - `CSS-VAR-001` (B, `custom-property-pattern`) — Custom Property names are kebab-case
 
 ### Rules upheld by AI (Class C, not linted — follow them yourself when generating and reviewing)

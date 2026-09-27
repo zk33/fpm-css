@@ -41,7 +41,7 @@ Use it when generating or reviewing with AI.
 | (2) Project skill only        | Project skill                                           | AI can reference all 22 rules                               | No                                           |
 | (3) Global skill              | Claude Code or Codex global skill                       | AI can reference all 22 rules in every project              | No (add Stylelint to each project if wanted) |
 
-Stylelint is optional. Without it, the skill still gives AI all 22 rules (A12 / B5 / C5),
+Stylelint is optional. Without it, the skill still gives AI all 22 rules (A13 / B4 / C5),
 but it does not mechanically check Class A and B rules.
 
 ## Pattern (1): use the Stylelint configuration
@@ -67,6 +67,35 @@ After writing CSS, run Stylelint on the target file or the whole project.
 ```sh
 npx stylelint "src/**/*.css"
 ```
+
+## Custom media defined in another file
+
+Keep `no-unknown-custom-media` enabled and point Stylelint at the definitions with
+its top-level `referenceFiles` option:
+
+```js
+// stylelint.config.cjs
+const path = require("node:path");
+
+module.exports = {
+  extends: ["stylelint-config-fpm"],
+  referenceFiles: [path.join(__dirname, "src/styles/_v.css")],
+};
+```
+
+This option requires Stylelint **17.9.0 or later** and is experimental. See the
+[Stylelint changelog](https://stylelint.io/changelog/#1790---2026-04-23) and
+[referenceFiles documentation](https://stylelint.io/user-guide/configure/#referencefiles).
+The package's general peer range is unchanged; projects using this option need
+that newer version. `_v.css` is an example location, not a required custom-media
+location. Use the actual definitions file for your project. The absolute path
+based on `__dirname` is independent of the command's working directory.
+
+`referenceFiles` helps check whether a referenced name exists; it does not enforce
+its definition location or naming convention, or replace a project's contract
+checks. Without the reference file, definitions in other partials are unavailable
+to `no-unknown-custom-media`. It does not bundle or inject CSS: resolve custom media
+in your build using the tools already used by your project.
 
 ## Use the skill
 

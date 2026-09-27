@@ -55,3 +55,18 @@ testRule({
 test("exports the registered plugin object", () => {
   expect(noCrossFileNesting.ruleName).toBe(ruleName);
 });
+
+
+testRule({
+  plugins, ruleName, config: true,
+  accept: [
+    ".card { @media (width < 600px) { .card-context & { color: red; } } }",
+    ".card { @media (width < 600px) { &.mode-active { color: red; } } }",
+    ".card { @media (width < 600px) { .g-btn { color: red; } } }"
+  ].map((code) => ({ code, codeFilename: "/project/css/_card.css" })),
+  reject: [
+    ".card { @media (width < 600px) { .header-nav { color: red; } } }",
+    ".card { @media (width < 600px) { @media (orientation: landscape) { .header-nav { color: red; } } } }",
+    ".header-nav { @media (width < 600px) { .card & { color: red; } } }"
+  ].map((code) => ({ code, codeFilename: "/project/css/_card.css", message: messages.rejected("header-nav", "card") }))
+});
