@@ -1,6 +1,6 @@
 {
   "name": "stylelint-config-fpm",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": false,
   "license": "MIT",
   "description": "Shareable Stylelint config for the fpm CSS convention.",
