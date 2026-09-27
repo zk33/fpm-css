@@ -12,7 +12,8 @@ module.exports = {
     ],
     "selector-max-id": 0,
     "at-rule-disallowed-list": ["layer", "scope", "extend"],
-    "max-nesting-depth": 1,
+    "max-nesting-depth": null,
+    "fpm/max-selector-nesting-depth": 1,
     "custom-property-pattern": [
       "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
       {

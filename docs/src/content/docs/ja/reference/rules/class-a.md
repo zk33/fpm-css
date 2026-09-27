@@ -7,7 +7,7 @@ sidebar:
 
 <!-- GENERATED — DO NOT EDIT -->
 
-Version: `1.2.0` / Rules: 12 (Class A; all rules: A12 / B5 / C5)
+Version: `1.2.0` / Rules: 13 (Class A; all rules: A13 / B4 / C5)
 
 `stylelint-plugin-fpm` の独自ルールで機械強制する。
 
@@ -199,7 +199,7 @@ JS操作対象とCSSスタイル対象を分離し、意図しないスタイル
 
 **概要**
 
-グローバル変数は _v.css に記述し、--v- 接頭辞、:root セレクタで定義する。逆に --v- 変数は _v.css の :root 以外で新規定義しない（モジュール側での参照は可）。
+グローバル変数の基本定義は _v.css の :root に --v- 接頭辞で置く。 既存の --v- はファイル同名のモジュールクラス、または _g.css の .g-* を主語として 上書きできる。mode compound とネストした @media も許可する。 セレクタリストの全枝で主語の条件を満たす必要があり、祖先や疑似の引数だけでは不可。 新しいグローバル名は _v.css に置く。lint は上書き位置を検査するが、中央定義の存在は検査しない。
 
 **根拠**
 
@@ -213,18 +213,23 @@ JS操作対象とCSSスタイル対象を分離し、意図しないスタイル
   --v-color-text: #333;
   --v-radius: 5px;
 }
+/* _header.css */
+.header { --v-color-text: #555; }
+.header.mode-dark { --v-color-text: #eee; }
+/* _g.css */
+:root.g-theme.mode-dark { --v-color-text: #eee; }
 ```
 
 **Bad**
 
 ```text
 /* _header.css */
-:root { --v-color-text: #333; }   /* _v.css 以外での --v- 定義 */
+:root { --v-color-text: #333; }   /* _v.css 以外の単独 :root は上書きの主語にできない */
 ```
 
 **AI/レビューで見る点**
 
---v- はグローバル専用。定義は _v.css の :root だけに置く。他ファイルやモジュール内で --v- を新規定義しない（参照 var(--v-…) は可）。
+基本定義は _v.css の :root に置く。既存名はファイル同名クラス（_header.css の .header） または _g.css の .g-* を主語として上書きできる。.mode-* や疑似クラスの連結も可。 ネストの & は @media 越しも親の主語に解決し、全セレクタ枝で条件を満たすこと。 opt-in は不要。中央に同名の定義があるかは lint では検査しないのでレビューで確認する。 var(--v-…) による参照は可。
 
 ### CSS-VAR-003: 変数名もファイル名と一致
 
@@ -268,7 +273,7 @@ _header.css に定義するモジュール変数は --header-*（先頭部＝フ
 
 **概要**
 
-モジュール単位の変数は :root ではなく、ファイル名と同名のクラス（_header.css なら .header） の中に定義する。--v- グローバル変数はモジュール内で定義しない（採用決定: --v- は _v.css/:root 専用）。
+モジュール単位の変数は :root ではなく、ファイル名と同名のクラス（_header.css なら .header） の中に定義する。既存の --v- はこのクラスで上書きでき、mode compound やネストした @media も許可する。_g.css の .g-* を主語とする上書きも CSS-VAR-002 に従い許可する。
 
 **根拠**
 
@@ -278,7 +283,7 @@ _header.css に定義するモジュール変数は --header-*（先頭部＝フ
 
 ```text
 /* _header.css */
-.header { --header-color-text: #333; }
+.header { --header-color-text: #333; --v-header-height: 30px; }
 ```
 
 **Bad**
@@ -286,14 +291,50 @@ _header.css に定義するモジュール変数は --header-*（先頭部＝フ
 ```text
 /* _header.css */
 :root { --header-color-text: #333; }
-.header { --v-header-height: 30px; }   /* モジュール内での --v- 定義は違反 */
 ```
 
 **AI/レビューで見る点**
 
-モジュール変数はファイル同名クラス（.header）のブロック内に定義し、:root には置かない。 モジュール内で --v- 接頭辞の変数を定義しない（--v- は _v.css の :root 専用＝CSS-VAR-002）。
+モジュール変数はファイル同名クラス（.header）のブロック内に定義し、:root には置かない。 既存の --v- は CSS-VAR-002 の主語の条件で上書きできる。新しいグローバル名は _v.css に置く。 中央定義の存在は lint では検査しない。
 
 ## Nesting
+
+### CSS-NEST-001: ネスト原則禁止・許可時も1階層まで
+
+- Class: `A`
+- Level: `error`
+- Category: `nesting`
+- stylelintRule: `fpm/max-selector-nesting-depth`
+
+**概要**
+
+セレクタのネストは基本禁止。必要な場合に限り1階層のみ許可。多段（.a .b .c）や 多子ネストは禁止。クラス内の @media は順序に関わらず深さに数えない。 ファイル直下の @media は引き続き禁止（CSS-RESP-002）。それ以外の at-rule は 標準の max-nesting-depth と同じ数え方を維持する。
+
+**根拠**
+
+詳細度と可読性を保ち、定義の追跡を容易にするため。
+
+**Good**
+
+```text
+.my-child {
+  .my-parent-alternate & { @media (--v-screen-sm) { … } }
+}
+.my-child {
+  @media (--v-screen-sm) { .my-parent-alternate & { … } }
+}
+```
+
+**Bad**
+
+```text
+.my-child { .my-parent & { .my-context & { … } } }
+.my-parent { .my-child {} .my-child2 {} }
+```
+
+**AI/レビューで見る点**
+
+ネストは原則使わない。使う場合も1階層まで。多段結合子や多子ネストを書かない。
 
 ### CSS-NEST-002: 別ファイル定義クラスのネスト上書き禁止
 

@@ -38,7 +38,7 @@ Class Cのルールは機械的に判断できない内容なため、LLM用のS
 | (2) プロジェクト skillのみ         | プロジェクト skill                                           | AIが全22規約を参照する                               | なし                                          |
 | (3) グローバル skill               | Claude CodeまたはCodexのグローバル skill                     | 全プロジェクトでAIが全22規約を参照する               | なし（Stylelintは各プロジェクトで任意に追加） |
 
-Stylelintは任意です。導入しない場合もskillは全22規約（A12 / B5 / C5）をAIに提供しますが、Class A/Bの機械検査は行われません。
+Stylelintは任意です。導入しない場合もskillは全22規約（A13 / B4 / C5）をAIに提供しますが、Class A/Bの機械検査は行われません。
 
 ## パターン (1): Stylelint設定を使う
 
@@ -61,6 +61,32 @@ module.exports = {
 ```sh
 npx stylelint "src/**/*.css"
 ```
+
+## 別ファイルで定義した custom media
+
+`no-unknown-custom-media` は有効なまま、利用側の Stylelint 設定のトップレベルに
+`referenceFiles` を指定して中央定義を参照します。
+
+```js
+// stylelint.config.cjs
+const path = require("node:path");
+
+module.exports = {
+  extends: ["stylelint-config-fpm"],
+  referenceFiles: [path.join(__dirname, "src/styles/_v.css")],
+};
+```
+
+このオプションは Stylelint **17.9.0 以降**で使える実験的機能です。
+[変更履歴](https://stylelint.io/changelog/#1790---2026-04-23)と
+[referenceFiles の説明](https://stylelint.io/user-guide/configure/#referencefiles)を参照してください。
+パッケージ全体の peer 条件は変えませんが、この設定を使うプロジェクトには上記の版が必要です。
+`_v.css` は配置例であり、custom media の定義場所を固定する規則ではありません。
+実際の定義ファイルを指定してください。`__dirname` に基づく絶対パスなので、コマンドの実行場所に依存しません。
+
+`referenceFiles` は名前の存在確認を補助します。定義位置・命名規約を検査するものではなく、
+プロジェクト独自の契約検査を全面的に置き換えるものでもありません。参照設定がなければ、別 partial の定義は
+`no-unknown-custom-media` から見えません。ビルド時のバンドルや注入は行わないため、利用中のビルドツールで解決してください。
 
 ## skillを使う
 

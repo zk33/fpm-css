@@ -7,7 +7,7 @@ sidebar:
 
 <!-- GENERATED — DO NOT EDIT -->
 
-Version: `1.2.0` / Rules: 5 (Class B; all rules: A12 / B5 / C5)
+Version: `1.2.0` / Rules: 4 (Class B; all rules: A13 / B4 / C5)
 
 既存のStylelint標準ルールで機械強制する。
 
@@ -82,42 +82,6 @@ CSS変数（Custom Property）名は全小文字ハイフン区切り。snake_ca
 **AI/レビューで見る点**
 
 Custom Property 名は kebab-case で書く（--base-margin）。--v- 接頭辞もこの形式に従う。
-
-## Nesting
-
-### CSS-NEST-001: ネスト原則禁止・許可時も1階層まで
-
-- Class: `B`
-- Level: `error`
-- Category: `nesting`
-- stylelintRule: `max-nesting-depth`
-
-**概要**
-
-セレクタのネストは基本禁止。必要な場合に限り1階層のみ許可。多段（.a .b .c）や 多子ネストは禁止。
-
-**根拠**
-
-詳細度と可読性を保ち、定義の追跡を容易にするため。
-
-**Good**
-
-```text
-.my-child {
-  .my-parent-alternate & { … }
-}
-```
-
-**Bad**
-
-```text
-.my-parent .my-child .my-element { … }
-.my-parent { .my-child {} .my-child2 {} }
-```
-
-**AI/レビューで見る点**
-
-ネストは原則使わない。使う場合も1階層まで。多段結合子や多子ネストを書かない。
 
 ## Prohibited
 

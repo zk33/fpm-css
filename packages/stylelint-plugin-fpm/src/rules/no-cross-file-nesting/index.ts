@@ -1,7 +1,7 @@
 import stylelint from "stylelint";
 import type { Root } from "postcss";
 
-import { getFilePrefix, getResolvedSubjectClassNames, hasFilePrefix } from "../../utils.js";
+import { getFilePrefix, getParentRuleThroughMedia, getResolvedSubjectClassNames, hasFilePrefix } from "../../utils.js";
 
 export const ruleName = "fpm/no-cross-file-nesting";
 
@@ -23,7 +23,7 @@ const rule: stylelint.Rule<boolean> = (primary) => {
     }
 
     root.walkRules((cssRule) => {
-      if (cssRule.parent?.type !== "rule") {
+      if (!getParentRuleThroughMedia(cssRule)) {
         return;
       }
 

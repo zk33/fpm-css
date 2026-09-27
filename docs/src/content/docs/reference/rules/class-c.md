@@ -7,7 +7,7 @@ sidebar:
 
 <!-- GENERATED — DO NOT EDIT -->
 
-Version: `1.2.0` / Rules: 5 (Class C; all rules: A12 / B5 / C5)
+Version: `1.2.0` / Rules: 5 (Class C; all rules: A13 / B4 / C5)
 
 Not enforced by the linter; upheld during AI generation and review.
 

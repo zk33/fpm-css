@@ -7,7 +7,7 @@ sidebar:
 
 <!-- GENERATED — DO NOT EDIT -->
 
-Version: `1.2.0` / Rules: 5 (Class B; all rules: A12 / B5 / C5)
+Version: `1.2.0` / Rules: 4 (Class B; all rules: A13 / B4 / C5)
 
 Enforced by existing standard Stylelint rules.
 
@@ -82,42 +82,6 @@ Match class naming notation and eliminate variation.
 **What AI and reviewers check**
 
 Write Custom Property names in kebab-case, such as --base-margin. The --v- prefix follows the same format.
-
-## Nesting
-
-### CSS-NEST-001: Nesting is discouraged; at most one level when allowed
-
-- Class: `B`
-- Level: `error`
-- Category: `nesting`
-- stylelintRule: `max-nesting-depth`
-
-**Summary**
-
-Do not nest selectors by default. When necessary, only one nesting level is allowed. Multiple levels such as .a .b .c and nesting multiple children are forbidden.
-
-**Rationale**
-
-Preserve specificity and readability and make definitions easy to trace.
-
-**Good**
-
-```text
-.my-child {
-  .my-parent-alternate & { … }
-}
-```
-
-**Bad**
-
-```text
-.my-parent .my-child .my-element { … }
-.my-parent { .my-child {} .my-child2 {} }
-```
-
-**What AI and reviewers check**
-
-Do not use nesting by default. If necessary, use only one level; do not nest multiple children or combinator chains.
 
 ## Prohibited
 

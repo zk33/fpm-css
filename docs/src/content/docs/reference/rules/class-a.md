@@ -7,7 +7,7 @@ sidebar:
 
 <!-- GENERATED — DO NOT EDIT -->
 
-Version: `1.2.0` / Rules: 12 (Class A; all rules: A12 / B5 / C5)
+Version: `1.2.0` / Rules: 13 (Class A; all rules: A13 / B4 / C5)
 
 Enforced by the custom rules in `stylelint-plugin-fpm`.
 
@@ -199,7 +199,7 @@ Always compound .mode- with its target class, such as .btn.mode-active. Do not w
 
 **Summary**
 
-Define global variables in _v.css with a --v- prefix in the :root selector. Conversely, do not newly define a --v- variable outside :root in _v.css; modules may reference them.
+Define global variables in _v.css with a --v- prefix in the :root selector. Override existing --v- variables on the file-named module class or, in _g.css, on a .g-* subject class, including mode compounds and nested @media. Every selector-list branch must have an allowed subject; an ancestor or pseudo argument alone is not an owner. New global names belong in _v.css. Lint checks the override location, not whether a central definition exists.
 
 **Rationale**
 
@@ -213,18 +213,23 @@ Fix global variable definitions to one location and make override sources explic
   --v-color-text: #333;
   --v-radius: 5px;
 }
+/* _header.css */
+.header { --v-color-text: #555; }
+.header.mode-dark { --v-color-text: #eee; }
+/* _g.css */
+:root.g-theme.mode-dark { --v-color-text: #eee; }
 ```
 
 **Bad**
 
 ```text
 /* _header.css */
-:root { --v-color-text: #333; }   /* Defining --v- outside _v.css */
+:root { --v-color-text: #333; }   /* Bare :root outside _v.css is not an override owner */
 ```
 
 **What AI and reviewers check**
 
---v- is only for globals. Define it only in :root of _v.css. Do not newly define --v- in another file or module; references such as var(--v-...) are allowed.
+Put global base definitions in _v.css :root. Override existing names on the file-named class (.header in _header.css) or .g-* in _g.css, optionally with .mode-* or pseudo-classes. Resolve nested & to its parent subject, including through @media; all selector branches must qualify. No opt-in is needed. Check that the central name exists during review: lint does not check this. References such as var(--v-...) are allowed.
 
 ### CSS-VAR-003: Variable names must also match the file name
 
@@ -268,7 +273,7 @@ Start module variable names with the file name prefix: --header-* in _header.css
 
 **Summary**
 
-Define module variables inside the class named after the file, such as .header in _header.css, rather than in :root. Do not define --v- globals inside a module; --v- is reserved for :root in _v.css.
+Define module variables inside the class named after the file, such as .header in _header.css, rather than in :root. Existing --v- globals may be overridden on that class (including mode compounds and nested @media), and on .g-* subjects in _g.css, as specified by CSS-VAR-002.
 
 **Rationale**
 
@@ -278,7 +283,7 @@ Close variable scope to its module and limit its effect range.
 
 ```text
 /* _header.css */
-.header { --header-color-text: #333; }
+.header { --header-color-text: #333; --v-header-height: 30px; }
 ```
 
 **Bad**
@@ -286,14 +291,50 @@ Close variable scope to its module and limit its effect range.
 ```text
 /* _header.css */
 :root { --header-color-text: #333; }
-.header { --v-header-height: 30px; }   /* --v- in a module is a violation */
 ```
 
 **What AI and reviewers check**
 
-Define module variables inside the block for the class named after the file, such as .header, not in :root. Do not define variables prefixed with --v- inside a module; --v- is reserved for :root in _v.css by CSS-VAR-002.
+Define module variables inside the block for the class named after the file, such as .header, not in :root. Existing --v- globals may be overridden on the allowed subjects in CSS-VAR-002; new global names still belong in _v.css. The linter does not verify central definition existence.
 
 ## Nesting
+
+### CSS-NEST-001: Nesting is discouraged; at most one level when allowed
+
+- Class: `A`
+- Level: `error`
+- Category: `nesting`
+- stylelintRule: `fpm/max-selector-nesting-depth`
+
+**Summary**
+
+Do not nest selectors by default. When necessary, only one nesting level is allowed. Multiple levels such as .a .b .c and nesting multiple children are forbidden. Nested @media does not add to the depth, in either order with a nested selector; file-root @media remains forbidden (CSS-RESP-002). Other at-rules retain standard max-nesting-depth counting.
+
+**Rationale**
+
+Preserve specificity and readability and make definitions easy to trace.
+
+**Good**
+
+```text
+.my-child {
+  .my-parent-alternate & { @media (--v-screen-sm) { … } }
+}
+.my-child {
+  @media (--v-screen-sm) { .my-parent-alternate & { … } }
+}
+```
+
+**Bad**
+
+```text
+.my-child { .my-parent & { .my-context & { … } } }
+.my-parent { .my-child {} .my-child2 {} }
+```
+
+**What AI and reviewers check**
+
+Do not use nesting by default. If necessary, use only one level; do not nest multiple children or combinator chains.
 
 ### CSS-NEST-002: No nested overrides of classes defined in other files
 

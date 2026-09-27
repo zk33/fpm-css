@@ -2,6 +2,7 @@ import customPropertyFilePrefix from "./rules/custom-property-file-prefix/index.
 import globalClassFile from "./rules/global-class-file/index.js";
 import globalVarContract from "./rules/global-var-contract/index.js";
 import keyframesFilePrefix from "./rules/keyframes-file-prefix/index.js";
+import maxSelectorNestingDepth from "./rules/max-selector-nesting-depth/index.js";
 import modeClassCompound from "./rules/mode-class-compound/index.js";
 import moduleVarOwner from "./rules/module-var-owner/index.js";
 import noCrossFileNesting from "./rules/no-cross-file-nesting/index.js";
@@ -16,6 +17,7 @@ export {
   globalClassFile,
   globalVarContract,
   keyframesFilePrefix,
+  maxSelectorNestingDepth,
   modeClassCompound,
   moduleVarOwner,
   noCrossFileNesting,
@@ -31,6 +33,7 @@ export default [
   keyframesFilePrefix,
   globalClassFile,
   noXClassStyle,
+  maxSelectorNestingDepth,
   modeClassCompound,
   noCrossFileNesting,
   nestedParentReference,

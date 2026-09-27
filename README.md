@@ -5,6 +5,9 @@ See the [published documentation](https://zk33.github.io/fpm-css/) for adoption 
 
 Japanese documentation: [https://zk33.github.io/fpm-css/ja/](https://zk33.github.io/fpm-css/ja/)
 
+For custom media defined in another partial, configure Stylelint's `referenceFiles`
+as shown in the [shared configuration README](packages/stylelint-config-fpm/README.md#custom-media-defined-in-another-file).
+
 ## For repository contributors
 
 ### SoT and generated outputs
